@@ -14,7 +14,7 @@
 Graph buildGraph() {
 
     //open file for reading
-    FILE *fp = stdin;
+    FILE *fp;
     fp = fopen("collection.txt", "r");
     char chararr[100];
     char **str = NULL;
@@ -23,7 +23,7 @@ Graph buildGraph() {
     
     //read URL names to str array
     while(fscanf(fp, "%100s", chararr) != EOF){
-        str = realloc(str, (numURLs + 1)*sizeof(*str));
+        str = realloc(str, (numURLs+1)*sizeof(char*));
         str[numURLs] = malloc(strlen(chararr)+1);
         strcpy(str[numURLs++], chararr);
     }
@@ -63,6 +63,9 @@ Graph buildGraph() {
         }
     }
 
+    //free memory associated with pointers
+    freePointer(str, numURLs);
+
     //return graph to main function
     return g;
 
@@ -88,4 +91,15 @@ int position(char *string, int length, char **str){
         }
     }
     return 0; 
+}
+
+//this function is used to free all memory associated with pointers
+void freePointer(char **ptr, int length){
+    int i; 
+
+    for(i=0; i<length; i++){
+        free(ptr[i]);
+    }
+
+    free(ptr);
 }

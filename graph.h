@@ -20,11 +20,7 @@ void removeEdge(Graph, Vertex, Vertex);
 
 // operations on graphs
 Graph newGraph(int nV);
-
-void disposeGraph(Graph g);
-=======
 void dropGraph(Graph);
-
 Graph makeGraph(int, int**);
 void showGraph(Graph);
 int  findPath(Graph, Vertex, Vertex, int, int *);
@@ -34,5 +30,6 @@ double numInLinks(Graph g, Vertex v);
 double numOutLinks(Graph g, Vertex v);
 double sumInLinks(Graph g, Vertex v);
 double sumOutLinks(Graph g, Vertex v);
+void disposeGraph(Graph g);
 
 #endif

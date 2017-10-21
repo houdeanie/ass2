@@ -37,11 +37,9 @@ int main(int argc, char *argv[]) {
     double dampener = atof(argv[1]);
     double diffPRsum = atof(argv[2]);
     int maxIt = atoi(argv[3]);
-    //pointer to pageRank array
-    double *p;
 
     //open collection.txt to read URL names
-    FILE *fp = stdin;
+    FILE *fp;
     fp = fopen("collection.txt", "r");
     char chararr[100];
     char **str = NULL;
@@ -50,11 +48,7 @@ int main(int argc, char *argv[]) {
     
     //store URL names in str array
     while(fscanf(fp, "%100s", chararr) != EOF){
-
-        printf("%s\n", chararr);
-=======
-
-        str = realloc(str, (numURLs + 1)*sizeof(*str));
+        str = realloc(str, (numURLs+1)*sizeof(char*));
         str[numURLs] = malloc(strlen(chararr)+1);
         strcpy(str[numURLs++], chararr);
     }
@@ -66,6 +60,9 @@ int main(int argc, char *argv[]) {
 
     //create a graph by calling the buildGraph function
     Graph g = buildGraph();
+
+    //pointer to pageRank array
+    double *p = malloc(sizeof(double)*getnumV(g));
 
     //call calculatePageRank function to calculate the pageRank for each URL. p is the pointer to the array returned by the function
     p = calculatePageRank(g, dampener, diffPRsum, maxIt);
@@ -81,9 +78,12 @@ int main(int argc, char *argv[]) {
     //call writeToText function to write required pageRank information to a text file
     writeToText(p, str, outgoing, numURLs);
 
-    showGraph(g);
-=======
+    //free memory associated with str and p
+    freePointer(str, numURLs);
+    free(p);
 
+    //dispose graph
+    disposeGraph(g);
 
     //success
     return 0;
@@ -118,6 +118,8 @@ double *calculatePageRank(Graph g, double d, double diffPR, int maxIt) {
     while(iterations<maxIt && diff >= diffPR){
         //increment the number of iterations by 1
         iterations++;
+        //reset value of diffSum for each iteration
+        diffSum = 0;
 
         //update old pageRank array
         for(u=0; u<N; u++){
@@ -143,45 +145,18 @@ double *calculatePageRank(Graph g, double d, double diffPR, int maxIt) {
 
         }
 
-        //update value of diffSum for the while loop condition
+        //update value of diffSum 
         for(k=0; k<N; k++){
-            diffSum = fabs(pageRank[k] - oldPR[k]);
+            diffSum = diffSum + fabs(pageRank[k] - oldPR[k]);
         }
 
         //update diff to diffSum
         diff = diffSum; 
 
-
     }
-        //END WHILE
 
-        //return pointer to pageRank array  
-        return pageRank;
-}
-
-//bubble sort function to sort pageRanks in descending order
-void sort(double *pr, char **str, int out[], int length){
-    //declare temp variables for pageRank array, URL name array and outLinks array
-    int i, j;
-    double temp;
-    int temp2; 
-    char *tempStr;
-
-    for(i=0; i<length; i++){
-        for(j=i+1; j<length; j++){
-            if(pr[i]<pr[j]){
-                //swap pageRank values if pr[i] < pr[j]
-                temp = pr[i];
-                pr[i] = pr[j];
-                pr[j] = temp;
-
-
-
-    }
-        //END WHILE
-
-        //return pointer to pageRank array  
-        return pageRank;
+    //return pointer to pageRank array 
+    return pageRank;
 }
 
 //bubble sort function to sort pageRanks in descending order
